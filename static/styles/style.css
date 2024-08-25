@@ -26,11 +26,15 @@ body {
     font-family: 'Dosis';
 }
 
-h1, h2, h3, h4, h5, h6, a, p, li, code, hr {
+h1, h2, h3, h4, h5, h6, a, p, li, code, hr, label {
     text-decoration: none;
     color: var(--font-color);
     margin: 0;
     padding: 0;
+}
+
+label {
+    font-weight: 600;
 }
 
 code {
@@ -48,7 +52,7 @@ svg {
 }
 
 header {
-    padding: 1em 5em;
+    padding: 2em 5em;
     display: flex;
 }
 
@@ -122,6 +126,8 @@ main {
 }
 
 section {
+    display: flex;
+    flex-direction: column;
     min-height: 0;
     max-width: 800px;
     padding: 2em 2em;

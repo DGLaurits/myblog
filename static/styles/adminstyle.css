@@ -1,0 +1,21 @@
+#write_form {
+    display: flex;
+    flex-direction: column;
+    width: clamp(100px, 80vw, 800px);
+    align-items: center;
+    gap: 10px;
+}
+
+#write_form input[name="title"] {
+    width: 300px;
+}
+
+#write_form textarea[name="description"] {
+    width: 60%;
+    height: 5em;
+}
+
+#write_form textarea[name="content"] {
+    width: 100%;
+    height: 40em;
+}

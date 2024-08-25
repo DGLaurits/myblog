@@ -35,5 +35,9 @@ def project_page(id):
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)
 
+@app.route("/write")
+def write_page():
+    return render_template("writing.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('.static', filename = 'styles/adminstyle.css') }}">
+{% endblock %}
+{% block main %}
+
+<section>
+    <form id="write_form">
+        <label for="title">Title</label>
+        <input type="text" name="title">
+        <label for="description">Description</label>
+        <textarea name="description"></textarea>
+        <label for="content">Content</label>
+        <textarea name="content"></textarea>
+    </form>
+</section>
+{% endblock %}
