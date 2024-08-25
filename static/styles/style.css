@@ -26,11 +26,17 @@ body {
     font-family: 'Dosis';
 }
 
-h1, h2, h3, h4, h5, h6, a, p {
+h1, h2, h3, h4, h5, h6, a, p, li, code, hr {
     text-decoration: none;
     color: var(--font-color);
     margin: 0;
     padding: 0;
+}
+
+code {
+    background-color: #324260;
+    border-radius: 4px;
+    padding: 2px;
 }
 
 svg {
@@ -112,6 +118,7 @@ main {
 }
 
 section {
+    min-height: 0;
     max-width: 800px;
     padding: 2em 2em;
 }
@@ -124,7 +131,7 @@ section {
     align-items: start;
     width: auto;
     padding: 10px;
-    margin-bottom: 4em;
+    margin-bottom: 2em;
     background-color: var(--light-color);
     border-radius: 1em;
     border: 2px solid var(--border-color);
