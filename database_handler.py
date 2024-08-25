@@ -29,5 +29,3 @@ def update_content_by_title(title: str, content_path: str):
     cursor.close()
     connect.close()
     update_content(id[0], content_path)
-
-update_content_by_title("This is a title", "projects/example.md")
