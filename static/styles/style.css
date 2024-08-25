@@ -39,6 +39,10 @@ code {
     padding: 2px;
 }
 
+img {
+    max-height: 80vh;
+}
+
 svg {
     fill: white;
 }
