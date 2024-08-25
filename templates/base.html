@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Laurits' blog</title>
     <link rel="stylesheet" href="{{ url_for('.static', filename = 'styles/style.css') }}">
+    {% block head_extra %}
+    {% endblock %}
 </head>
 <body>
     <header>
