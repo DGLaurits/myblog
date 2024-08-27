@@ -5,13 +5,46 @@
 {% block main %}
 
 <section>
-    <form id="write_form">
-        <label for="title">Title</label>
+    <form action="/write" method="post" id="write_form">
+        <label>Title</label>
         <input type="text" name="title">
-        <label for="description">Description</label>
-        <textarea name="description"></textarea>
-        <label for="content">Content</label>
-        <textarea name="content"></textarea>
+        <label>Description</label>
+        <textarea name="description" id="description"></textarea>
+        <div>
+            <label>Content</label>
+            <button type="button" id="preview-button">Preview</button>
+        </div>
+        <textarea name="content" id="content"></textarea>
+        <div id="preview" class="hidden">
+    
+        </div>
+        <button type="submit">Save post</button>
     </form>
 </section>
+<script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+<script>
+    
+    description = document.getElementById("description")
+    content = document.getElementById("content");
+    preview = document.getElementById("preview");
+    preview_button = document.getElementById("preview-button");
+
+    description.addEventListener('input', () => {
+
+    });
+
+    content.addEventListener('input', () => {
+        content.style.height = `${content.scrollHeight-4}px`;
+        var converter = new showdown.Converter(),
+        text      = content.value,
+        html      = converter.makeHtml(text);
+        preview.innerHTML = html;
+    });
+
+    preview_button.addEventListener("click", () => {
+        content.classList.toggle("hidden");
+        preview.classList.toggle("hidden");
+    });
+    
+</script>
 {% endblock %}

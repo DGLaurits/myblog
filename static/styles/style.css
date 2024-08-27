@@ -38,9 +38,21 @@ label {
 }
 
 code {
+    text-decoration: none;
+    color: var(--font-color);
+    display: inline-block;
     background-color: #324260;
     border-radius: 4px;
     padding: 2px;
+}
+
+button {
+    background-color: var(--light-color);
+    border-color: var(--dark-color);
+    border-radius: 2px;
+    font-family: 'Dosis';
+    font-weight: 700;
+    padding: 0.3em .8em;
 }
 
 img {
@@ -54,6 +66,11 @@ svg {
 header {
     padding: 2em 5em;
     display: flex;
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
 }
 
 .top-nav {

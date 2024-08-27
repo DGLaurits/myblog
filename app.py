@@ -1,4 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from werkzeug.utils import secure_filename
+import database_handler
 import markdown
 import sqlite3
 
@@ -35,8 +37,11 @@ def project_page(id):
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)
 
-@app.route("/write")
+@app.route("/write", methods=["GET", "POST"])
 def write_page():
+    if request.method == "POST":
+        print(request.form.to_dict())
+    
     return render_template("writing.html")
 
 if __name__ == "__main__":
