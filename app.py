@@ -19,21 +19,13 @@ def about():
 
 @app.route("/projects")
 def projects():
-    
-    db = sqlite3.connect("database.db")
-    db.row_factory = sqlite3.Row
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM projects LIMIT 10")
-    my_projects = cursor.fetchall()
-
+    my_projects = database_handler.get_projects(10)
     return render_template("projects.html", my_projects=my_projects)
 
 @app.route("/projects/<id>")
 def project_page(id):
-    db = sqlite3.connect("database.db")
-    cursor = db.cursor()
-    cursor.execute("SELECT content FROM projects WHERE id = ?", id)
-    content_markdown = cursor.fetchone()[0]
+    
+    content_markdown = database_handler.get_project_by_id(id)
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)
 

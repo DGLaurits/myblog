@@ -29,3 +29,16 @@ def update_content_by_title(title: str, content_path: str):
     cursor.close()
     connect.close()
     update_content(id[0], content_path)
+
+def get_projects(amount: int):
+    db = sqlite3.connect("database.db")
+    db.row_factory = sqlite3.Row
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM projects LIMIT 10")
+    return cursor.fetchall()
+
+def get_project_by_id(id: int):
+    db = sqlite3.connect("database.db")
+    cursor = db.cursor()
+    cursor.execute("SELECT content FROM projects WHERE id = ?", id)
+    return cursor.fetchone()[0]
