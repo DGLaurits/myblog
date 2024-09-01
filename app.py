@@ -38,11 +38,11 @@ def project_page(id):
 @app.route("/write", methods=["GET", "POST"])
 def write_page():
     if request.method == "POST":
-        title = request.form.getlist()['title']
-        description = request.form.getlist()['description']
-        content = request.form.getlist()['content']
-        image_path = request.form.getlist()['image_path']
-        db.add_project(title, content, description, "static/images/projects/mandelbrot-visualizer.png", image_path)
+        title = request.form.get('title')
+        description = request.form.get('description')
+        content = request.form.get('content')
+        image_path = request.form.get('image_path')
+        db.add_project(title, content, description, image_path)
         return redirect("/projects")
     
     return render_template("writing.html")

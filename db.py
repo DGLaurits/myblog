@@ -1,10 +1,8 @@
 import sqlite3
 from datetime import date
 
-def add_project(title: str, content_path: str, description: str, main_image_path: str):
+def add_project(title: str, content: str, description: str, main_image_path: str):
     current_date = date.today().strftime('%d-%m-%Y')
-    with open(content_path, 'r', encoding='utf-8') as read_file:
-        content = read_file.read()
 
     connect = sqlite3.connect('database.db')
     cursor = connect.cursor()
