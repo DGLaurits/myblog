@@ -3,7 +3,6 @@
 
 ## Roadmap
 #### Finish the blog app
-+ Convert database library to sqlalchemy
 + Make login feature for admin
 + Finish file saving system
 

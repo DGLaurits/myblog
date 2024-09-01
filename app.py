@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
-import database_handler
+import db
 import markdown
 
 app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-
 
 @app.route("/")
 def index():
@@ -18,13 +17,13 @@ def about():
 
 @app.route("/projects")
 def projects():
-    my_projects = database_handler.get_projects(10)
+    my_projects = db.get_projects(10)
     return render_template("projects.html", my_projects=my_projects)
 
 @app.route("/projects/<id>")
 def project_page(id):
     
-    content_markdown = database_handler.get_project_by_id(id)
+    content_markdown = db.get_project_by_id(id)
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)
 
