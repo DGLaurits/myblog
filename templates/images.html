@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block main %}
+
+<section style="display: flex; flex-wrap: wrap; flex-direction: row;">
+    {% for i in images %}
+    <div style="padding: 20px; width: 160px; height: auto;">
+        <img style="width: 160px; height: auto;" src="{{ i }}"/>
+        <p style="font-size: .6em; text-align: center;">{{ i }}</p>
+    </div>
+
+    {% endfor %}
+    <div style="padding: 20px; width: 160px; height: auto; border: solid 2px rgb(85, 131, 184);">
+        <form style="display: flex; flex-direction: column;" action="/images" method="POST" enctype=multipart/form-data>
+            <input type="file" name="file" id="file_input">
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

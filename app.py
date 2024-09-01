@@ -1,11 +1,19 @@
-from flask import Flask, render_template, request
+from flask import Flask, flash, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 import db
 import markdown
+import os
+
+IMAGE_FOLDER = 'static/images/uploads'
+ALLOWED_IMG_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.secret_key = "HELLOHELO"
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_IMG_EXTENSIONS
 
 @app.route("/")
 def index():
@@ -30,9 +38,37 @@ def project_page(id):
 @app.route("/write", methods=["GET", "POST"])
 def write_page():
     if request.method == "POST":
-        print(request.form.to_dict())
+        title = request.form.getlist()['title']
+        description = request.form.getlist()['description']
+        content = request.form.getlist()['content']
+        db.add_project(title, content, description, "static/images/projects/mandelbrot-visualizer.png")
+        return redirect("/projects")
     
     return render_template("writing.html")
+
+@app.route("/images", methods=['GET', 'POST'])
+def images():
+    if request.method == 'POST':
+        print(request.files)
+        if 'file' not in request.files:
+            print("part")
+            flash('No file part')
+            return redirect('/images')
+        file = request.files['file']
+        if file.filename == '':
+            print("select")
+            flash("No selected file")
+            return redirect("/images")
+        if file and allowed_file(file.filename):
+            print("half success")
+            filename = secure_filename(file.filename)
+            file.save(f"{IMAGE_FOLDER}/{filename}")
+        flash("success")
+        return redirect("/images")
+    
+    image_files = os.listdir(IMAGE_FOLDER)
+    image_paths = [f"{IMAGE_FOLDER}/{file}" for file in image_files]
+    return render_template("images.html", images=image_paths)
 
 if __name__ == "__main__":
     app.run(debug=True)
