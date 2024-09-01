@@ -28,8 +28,6 @@ def project_page(id):
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)
 
-@app.route('')
-
 @app.route("/write", methods=["GET", "POST"])
 def write_page():
     if request.method == "POST":
