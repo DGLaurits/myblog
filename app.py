@@ -41,7 +41,8 @@ def write_page():
         title = request.form.getlist()['title']
         description = request.form.getlist()['description']
         content = request.form.getlist()['content']
-        db.add_project(title, content, description, "static/images/projects/mandelbrot-visualizer.png")
+        image_path = request.form.getlist()['image_path']
+        db.add_project(title, content, description, "static/images/projects/mandelbrot-visualizer.png", image_path)
         return redirect("/projects")
     
     return render_template("writing.html")
