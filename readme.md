@@ -2,8 +2,6 @@
 
 
 ## Roadmap
-#### Finish the blog app
-+ Make login feature for admin
 
 #### Write blogs
  + Write blog about the mandel-brot visualizer
