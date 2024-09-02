@@ -1,4 +1,5 @@
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, flash, render_template, request, redirect, url_for, session
+from functools import wraps
 from werkzeug.utils import secure_filename
 import db
 import markdown
@@ -6,14 +7,28 @@ import os
 
 IMAGE_FOLDER = 'static/images/uploads'
 ALLOWED_IMG_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ADMIN_PASS = "Helloworld"
+SECRET_KEY = "pislort"
 
 app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.secret_key = "HELLOHELO"
+app.secret_key = SECRET_KEY
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_IMG_EXTENSIONS
+
+def admin_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if is_admin():
+            return f(*args, **kwargs)
+        else:
+            return "NOT LOGGED IN"
+    return wrap
+
+def is_admin():
+    return 'admin' in session and session['admin']
 
 @app.route("/")
 def index():
@@ -35,7 +50,24 @@ def project_page(id):
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)
 
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        if request.form.get('password') == ADMIN_PASS:
+            session['admin'] = True
+            return redirect('/')
+        else:
+            return render_template('admin_login.html', message = "INCORRECT PASSWORD")
+    return render_template('admin_login.html', is_admin=is_admin())
+
+@app.route('/logout')
+def logout():
+    if is_admin():
+        session['admin'] = False
+    return redirect('/')
+
 @app.route("/write", methods=["GET", "POST"])
+@admin_required
 def write_page():
     if request.method == "POST":
         title = request.form.get('title')
@@ -48,6 +80,7 @@ def write_page():
     return render_template("writing.html")
 
 @app.route("/images", methods=['GET', 'POST'])
+@admin_required
 def images():
     if request.method == 'POST':
         print(request.files)

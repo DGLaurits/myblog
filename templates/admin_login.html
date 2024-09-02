@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block main %}
+
+<section>
+    {% if isadmin %}
+    <form action="/logout" method="post">
+        <button type="submit">Logout</button>
+    </form>
+    {% else %}
+    <form style="display: flex; flex-direction: column; gap: 10px;" action="/admin" method="post">
+        <div>
+            <label>Admin password:</label>
+            <input type="password" name="password" id="password">
+        </div>
+        <button type="submit">Enter</button>
+        <p style="color: red;"><strong>{{message}}</strong></p>
+    </form>
+    {% endif %}
+</section>
+
+{% endblock %}
