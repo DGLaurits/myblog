@@ -55,9 +55,9 @@ def load_project_by_id(id: int):
 
 # Storing and loading images
 
-def add_image(title: str, image: str):
+def add_image(file_name: str, image: str):
     cursor = connect.cursor()
-    cursor.execute("INSERT INTO images (title, image) VALUES (?, ?)", (title, image))
+    cursor.execute("INSERT INTO images (file_name, image) VALUES (?, ?)", (file_name, image))
     connect.commit()
     cursor.close()
 
