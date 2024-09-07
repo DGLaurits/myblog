@@ -79,6 +79,7 @@ def write_page():
     return render_template("writing.html")
 
 @app.route("/upload_image", methods=['POST'])
+@admin_required
 def post_image():
     if 'file' not in request.files:
         flash('No file part')
