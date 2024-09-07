@@ -101,7 +101,6 @@ def send_image(id):
     if not image:
         return "No image with this id"
     image_binary = image['image']
-    image_title = image['title']
     return send_file(io.BytesIO(image_binary), mimetype="image/jpeg")
 
 def id_generator(size=32, chars=string.ascii_uppercase + string.digits):
