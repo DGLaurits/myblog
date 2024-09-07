@@ -7,8 +7,8 @@ import os
 
 IMAGE_FOLDER = 'static/images/uploads'
 ALLOWED_IMG_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-ADMIN_PASS = "Helloworld"
-SECRET_KEY = "pislort"
+ADMIN_PASS = os.environ['ADMIN_CODE']
+SECRET_KEY = os.environ['SECRET_CODE']
 
 app = Flask(__name__)
 
