@@ -22,8 +22,22 @@
         </div>
         <button type="submit">Save post</button>
     </form>
+    <br>
+    <h1>Images</h1>
+    <div style="display: flex; justify-content: space-around; padding: 20px; width:auto; height: auto; border: solid 2px rgb(85, 131, 184);">
+        <button id="left">←</button>
+        <img class="img_preview" style="max-height: 50px; max-width: 50px;" src="/get_image/1" title="1">
+        <img class="img_preview" style="max-height: 50px; max-width: 50px;" src="/get_image/2" title="2">
+        <img class="img_preview" style="max-height: 50px; max-width: 80px;" src="/get_image/3" title="3">
+        <img class="img_preview" style="max-height: 50px; max-width: 80px;" src="/get_image/4" title="4">
+        <img class="img_preview" style="max-height: 50px; max-width: 80px;" src="/get_image/5" title="5">
+        <img class="img_preview" style="max-height: 50px; max-width: 80px;" src="/get_image/6" title="6">
+        <img class="img_preview" style="max-height: 50px; max-width: 80px;" src="/get_image/7" title="7">
+        <button id="right">→</button>
+    </div>
+    <br>
     <h1>Image Upload</h1>
-    <div style="padding: 20px; width: 160px; height: auto; border: solid 2px rgb(85, 131, 184);">
+    <div style="padding: 20px; width:50%; height: auto; border: solid 2px rgb(85, 131, 184);">
         <form style="display: flex; flex-direction: column;" action="/images" method="POST" enctype=multipart/form-data>
             <input type="file" name="file" id="file_input">
             <button type="submit">Save</button>
@@ -34,7 +48,7 @@
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
     
-    description = document.getElementById("description")
+    description = document.getElementById("description");
     content = document.getElementById("content");
     preview = document.getElementById("preview");
     preview_button = document.getElementById("preview-button");
@@ -56,5 +70,31 @@
         preview.classList.toggle("hidden");
     });
     
+    left_button = document.getElementById("left");
+    right_button = document.getElementById("right");
+    images = document.getElementsByClassName("img_preview");
+
+    offset = 0;
+
+    left_button.addEventListener("click", () => {
+        i = 1;
+        offset--;
+        for (element of images) {
+            element.setAttribute("src", "/get_image/" + (offset+i))
+            element.setAttribute("title", offset+i)
+            i++;
+        }
+    })
+
+    right_button.addEventListener("click", () => {
+        i = 1;
+        offset++;
+        for (element of images) {
+            element.setAttribute("src", "/get_image/" + (offset+i))
+            element.setAttribute("title", offset+i)
+            i++;
+        }
+    })
+
 </script>
 {% endblock %}
