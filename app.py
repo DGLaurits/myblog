@@ -44,7 +44,6 @@ def projects():
 
 @app.route("/projects/<id>")
 def project_page(id):
-    
     content_markdown = db.load_project_by_id(id)
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)

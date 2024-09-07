@@ -38,10 +38,11 @@
     <br>
     <h1>Image Upload</h1>
     <div style="padding: 20px; width:50%; height: auto; border: solid 2px rgb(85, 131, 184);">
-        <form style="display: flex; flex-direction: column;" action="/images" method="POST" enctype=multipart/form-data>
+        <div style="display: flex; flex-direction: column;">
             <input type="file" name="file" id="file_input">
-            <button type="submit">Save</button>
-        </form>
+            <button id="upload">Save</button>
+            <p id="upload_message"></p>
+        </div>
     </div>
     <div></div>
 </section>
@@ -90,10 +91,32 @@
         i = 1;
         offset++;
         for (element of images) {
-            element.setAttribute("src", "/get_image/" + (offset+i))
-            element.setAttribute("title", offset+i)
+            element.setAttribute("src", "/get_image/" + (offset+i));
+            element.setAttribute("title", offset+i);
             i++;
         }
+    })
+
+    file_input = document.getElementById("file_input");
+    upload_button = document.getElementById("upload");
+    upload_message = document.getElementById("upload_message");
+
+    upload_button.addEventListener("click", () => {
+        var url = "/upload_image";
+        var request = new XMLHttpRequest();
+        request.open('POST', url, true);
+        request.onload = () => {
+            upload_message.innerHTML = "Success";
+        }
+        request.onerror = () => {
+            upload_message.innerHTML = "Error";
+        }
+        
+        form_data = new FormData();
+        form_data.append('file', file_input.files[0]);
+        request.send(form_data);
+        event.preventDefault();
+
     })
 
 </script>
