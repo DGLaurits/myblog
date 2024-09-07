@@ -1,9 +1,8 @@
-from flask import Flask, flash, render_template, request, redirect, url_for, session
+from flask import Flask, flash, render_template, request, redirect, session, send_file
 from functools import wraps
 from werkzeug.utils import secure_filename
-import db
-import markdown
-import os
+import db, string, random, os, markdown, io
+
 
 IMAGE_FOLDER = 'static/images/uploads'
 ALLOWED_IMG_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -40,13 +39,13 @@ def about():
 
 @app.route("/projects")
 def projects():
-    my_projects = db.get_projects(10)
+    my_projects = db.load_projects(10)
     return render_template("projects.html", my_projects=my_projects)
 
 @app.route("/projects/<id>")
 def project_page(id):
     
-    content_markdown = db.get_project_by_id(id)
+    content_markdown = db.load_project_by_id(id)
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)
 
@@ -79,30 +78,34 @@ def write_page():
     
     return render_template("writing.html")
 
-@app.route("/images", methods=['GET', 'POST'])
-@admin_required
-def images():
-    if request.method == 'POST':
-        print(request.files)
-        if 'file' not in request.files:
-            print("part")
-            flash('No file part')
-            return redirect('/images')
-        file = request.files['file']
-        if file.filename == '':
-            print("select")
-            flash("No selected file")
-            return redirect("/images")
-        if file and allowed_file(file.filename):
-            print("half success")
-            filename = secure_filename(file.filename)
-            file.save(f"{IMAGE_FOLDER}/{filename}")
-        flash("success")
+@app.route("/upload_image", methods=['POST'])
+def post_image():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect('/images')
+    file = request.files['file']
+    if file.filename == '':
+        flash("No selected file")
         return redirect("/images")
-    
-    image_files = os.listdir(IMAGE_FOLDER)
-    image_paths = [f"{IMAGE_FOLDER}/{file}" for file in image_files]
-    return render_template("images.html", images=image_paths)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        fileextension = filename.rsplit('.',1)[1]
+        filename = id_generator() + '.' + fileextension
+        db.add_image(filename, file.read())
+
+    return redirect("/images")
+
+@app.route("/get_image/<id>")
+def send_image(id):
+    image = db.load_image(id)
+    if not image:
+        return "No image with this id"
+    image_binary = image['image']
+    image_title = image['title']
+    return send_file(io.BytesIO(image_binary), mimetype="image/jpeg")
+
+def id_generator(size=32, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 if __name__ == "__main__":
     app.run(debug=True)

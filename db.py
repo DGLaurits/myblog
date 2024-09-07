@@ -7,6 +7,7 @@ connect.row_factory = sqlite3.Row
 cursor = connect.cursor()
 
 cursor.execute('CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL, description TEXT NOT NULL, main_image TEXT NOT NULL, date TEXT DEFAULT "21-08-2024");')
+cursor.execute('CREATE TABLE IF NOT EXISTS images (id INTEGER PRIMARY KEY, file_name TEXT NOT NULL UNIQUE, image BLOB NOT NULL);')
 
 
 def add_project(title: str, content: str, description: str, main_image_path: str):
@@ -29,10 +30,21 @@ def delete_project(id: int):
     cursor.execute("DELETE FROM projects WHERE id = ?", (id,))
     connect.commit()
 
-def get_projects(amount: int):
+def load_projects(amount: int):
     cursor.execute("SELECT * FROM projects LIMIT ?", str(amount))
     return cursor.fetchall()
 
-def get_project_by_id(id: int):
+def load_project_by_id(id: int):
     cursor.execute("SELECT content FROM projects WHERE id = ?", str(id))
     return cursor.fetchone()[0]
+
+
+# Storing and loading images
+
+def add_image(title: str, image: str):
+    cursor.execute("INSERT INTO images (title, image) VALUES (?, ?)", (title, image))
+    connect.commit()
+
+def load_image(id: int):
+    cursor.execute("SELECT * FROM images WHERE id = ?", (str(id), ))
+    return cursor.fetchone()
