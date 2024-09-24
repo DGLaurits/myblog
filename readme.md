@@ -2,6 +2,13 @@
 
 
 ## Roadmap
+#### Finish site
+ + Add "new blog post"
+ + Add "public or private to database"
+ + Add "delete blog post"
+
+#### Miscellanous
+ + Make images center in blog posts
 
 #### Write blogs
  + Write blog about the mandel-brot visualizer
