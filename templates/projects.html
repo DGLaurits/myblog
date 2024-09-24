@@ -3,7 +3,13 @@
 
 <section>
 {% for project in my_projects %}
-    <a href="projects/{{ project['id'] }}" class="project_intro">
+    <a 
+    {% if is_admin%}
+    href="/edit/{{ project['id'] }}" 
+    {% else %}
+    href="/projects/{{ project['id'] }}" 
+    {% endif %}
+    class="project_intro">
         <img src="{{ project['main_image'] }}">
         <h3 class="title">{{ project['title'] }}</h4>
         <p class="description">{{ project['description'] }}</p>

@@ -18,6 +18,13 @@ def add_project(title: str, content: str, description: str, main_image_path: str
     connect.commit()
     cursor.close()
 
+def update_project(id: str, title: str, content: str, description: str, main_image_path: str):
+    cursor = connect.cursor()
+    current_date = date.today().strftime('%d-%m-%Y')
+    cursor.execute("UPDATE projects SET title = ?, content = ?, description = ?, main_image = ?, date = ? WHERE id = ?", (title, content, description, main_image_path, current_date, id))
+    connect.commit()
+    cursor.close()
+
 def update_content(id: str, content: str):
     cursor = connect.cursor()
     current_date = date.today().strftime('%d-%m-%Y')
@@ -47,8 +54,8 @@ def load_projects(amount: int):
 
 def load_project_by_id(id: int):
     cursor = connect.cursor()
-    cursor.execute("SELECT content FROM projects WHERE id = ?", (str(id), ))
-    result = cursor.fetchone()[0]
+    cursor.execute("SELECT * FROM projects WHERE id = ?", (str(id), ))
+    result = cursor.fetchone()
     cursor.close()
     return result
 

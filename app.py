@@ -33,20 +33,31 @@ def is_admin():
 def index():
     return render_template("home.html")
 
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
 @app.route("/projects")
 def projects():
     my_projects = db.load_projects(10)
-    return render_template("projects.html", my_projects=my_projects)
+    return render_template("projects.html", my_projects=my_projects, is_admin=is_admin())
 
 @app.route("/projects/<id>")
 def project_page(id):
-    content_markdown = db.load_project_by_id(id)
+    content_markdown = db.load_project_by_id(id)['content']
     content_html = markdown.markdown(content_markdown)
     return render_template("project_page.html", content=content_html)
+
+@app.route("/edit/<id>", methods=["GET", "POST"])
+@admin_required
+def write_page(id):
+    if request.method == "POST":
+        title = request.form.get('title')
+        description = request.form.get('description')
+        content = request.form.get('content')
+        image_path = request.form.get('image_path')
+        db.update_project(id, title, content, description, image_path)
+        return redirect(f"/edit/{id}")
+    
+    project = db.load_project_by_id(id)
+
+    return render_template("writing.html", project=project)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
@@ -55,7 +66,7 @@ def admin_login():
             session['admin'] = True
             return redirect('/')
         else:
-            return render_template('admin_login.html', message = "INCORRECT PASSWORD")
+            return render_template('admin_login.html', message = "Fuck af")
     return render_template('admin_login.html', is_admin=is_admin())
 
 @app.route('/logout')
@@ -63,19 +74,6 @@ def logout():
     if is_admin():
         session['admin'] = False
     return redirect('/')
-
-@app.route("/write", methods=["GET", "POST"])
-@admin_required
-def write_page():
-    if request.method == "POST":
-        title = request.form.get('title')
-        description = request.form.get('description')
-        content = request.form.get('content')
-        image_path = request.form.get('image_path')
-        db.add_project(title, content, description, image_path)
-        return redirect("/projects")
-    
-    return render_template("writing.html")
 
 @app.route("/upload_image", methods=['POST'])
 @admin_required

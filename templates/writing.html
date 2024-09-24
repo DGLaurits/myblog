@@ -5,18 +5,18 @@
 {% block main %}
 
 <section>
-    <form action="/write" method="post" id="write_form">
+    <form action="/edit/{{project['id']}}" method="post" id="write_form">
         <label>Title</label>
-        <input type="text" name="title">
+        <input type="text" name="title" value="{{project['title']}}">
         <label>Image path</label>
-        <input type="text" name="image_path">
+        <input type="text" name="image_path" value="{{project['main_image']}}">
         <label>Description</label>
-        <textarea name="description" id="description" style="font-family: 'Dosis';"></textarea>
+        <textarea name="description" id="description" style="font-family: 'Dosis';">{{project['description']}}</textarea>
         <div>
             <label>Content</label>
             <button type="button" id="preview-button">Preview</button>
         </div>
-        <textarea name="content" id="content"></textarea>
+        <textarea name="content" id="content">{{project['content']}}</textarea>
         <div id="preview" class="hidden">
     
         </div>
@@ -49,6 +49,7 @@
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
     
+    // Updating preview to show html of markdown
     description = document.getElementById("description");
     content = document.getElementById("content");
     preview = document.getElementById("preview");
@@ -58,19 +59,25 @@
 
     });
 
-    content.addEventListener('input', () => {
+    function content_update() {
         content.style.height = `${content.scrollHeight-4}px`;
         var converter = new showdown.Converter(),
         text      = content.value,
         html      = converter.makeHtml(text);
         preview.innerHTML = html;
-    });
+    }
+
+    content.addEventListener('input', content_update);
+
+    content_update()
 
     preview_button.addEventListener("click", () => {
         content.classList.toggle("hidden");
         preview.classList.toggle("hidden");
     });
     
+    // Image carousel
+
     left_button = document.getElementById("left");
     right_button = document.getElementById("right");
     images = document.getElementsByClassName("img_preview");
@@ -97,6 +104,14 @@
         }
     })
 
+    // Add image to content on click
+    for (element of images) {
+        element.addEventListener("click", () => {
+            content.innerHTML += "\n![image](https://lauritssm.dk" + element.getAttribute('src') + ")\n"
+        })
+    }
+
+    // Image upload
     file_input = document.getElementById("file_input");
     upload_button = document.getElementById("upload");
     upload_message = document.getElementById("upload_message");
