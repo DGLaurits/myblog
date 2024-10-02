@@ -52,7 +52,8 @@ def write_page(id):
         description = request.form.get('description')
         content = request.form.get('content')
         image_path = request.form.get('image_path')
-        db.update_project(id, title, content, description, image_path)
+        public = 1 if request.form.get('public') == "on" else 0
+        db.update_project(id, title, content, description, image_path, public)
         return redirect(f"/edit/{id}")
     
     project = db.load_project_by_id(id)

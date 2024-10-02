@@ -13,6 +13,10 @@
         <label>Description</label>
         <textarea name="description" id="description" style="font-family: 'Dosis';">{{project['description']}}</textarea>
         <div>
+            <label for="public">Public</label>
+            <input type="checkbox" name="public" {% if project["public"] %} checked {%endif%}>
+        </div>
+        <div>
             <label>Content</label>
             <button type="button" id="preview-button">Preview</button>
         </div>
@@ -107,7 +111,8 @@
     // Add image to content on click
     for (element of images) {
         element.addEventListener("click", () => {
-            content.innerHTML += "\n![image](https://lauritssm.dk" + element.getAttribute('src') + ")\n"
+            content.innerHTML += "\n![image](https://lauritssm.dk" + element.getAttribute('src') + ")\n"        
+            content_update()
         })
     }
 

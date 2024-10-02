@@ -6,6 +6,7 @@
  + Add "new blog post"
  + Add "public or private to database"
  + Add "delete blog post"
+ + Add tags
 
 #### Miscellanous
  + Make images center in blog posts

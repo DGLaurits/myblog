@@ -10,18 +10,18 @@ cursor.execute('CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY, tit
 cursor.execute('CREATE TABLE IF NOT EXISTS images (id INTEGER PRIMARY KEY, file_name TEXT NOT NULL UNIQUE, image BLOB NOT NULL);')
 cursor.close()
 
-def add_project(title: str, content: str, description: str, main_image_path: str):
+def add_project(title: str, content: str, description: str, main_image_path: str, public: int):
     cursor = connect.cursor()
     current_date = date.today().strftime('%d-%m-%Y')
 
-    cursor.execute('INSERT INTO projects (title, content, description, main_image, date) VALUES (?, ?, ?, ?, ?)', (title, content, description, main_image_path, current_date))
+    cursor.execute('INSERT INTO projects (title, content, description, main_image, date, public) VALUES (?, ?, ?, ?, ?, ?)', (title, content, description, main_image_path, current_date, public))
     connect.commit()
     cursor.close()
 
-def update_project(id: str, title: str, content: str, description: str, main_image_path: str):
+def update_project(id: str, title: str, content: str, description: str, main_image_path: str, public: int):
     cursor = connect.cursor()
     current_date = date.today().strftime('%d-%m-%Y')
-    cursor.execute("UPDATE projects SET title = ?, content = ?, description = ?, main_image = ?, date = ? WHERE id = ?", (title, content, description, main_image_path, current_date, id))
+    cursor.execute("UPDATE projects SET title = ?, content = ?, description = ?, main_image = ?, date = ?, public = ? WHERE id = ?", (title, content, description, main_image_path, current_date, public, id))
     connect.commit()
     cursor.close()
 
