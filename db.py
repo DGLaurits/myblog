@@ -45,7 +45,14 @@ def delete_project(id: int):
     connect.commit()
     cursor.close()
 
-def load_projects(amount: int):
+def load_public_projects(amount: int = 10):
+    cursor = connect.cursor()
+    cursor.execute("SELECT * FROM projects WHERE public = 1 LIMIT ?", (str(amount), ))
+    result = cursor.fetchall()
+    cursor.close()
+    return result
+
+def load_all_projects(amount: int = 10):
     cursor = connect.cursor()
     cursor.execute("SELECT * FROM projects LIMIT ?", (str(amount), ))
     result = cursor.fetchall()

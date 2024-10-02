@@ -35,7 +35,10 @@ def index():
 
 @app.route("/projects")
 def projects():
-    my_projects = db.load_projects(10)
+    if is_admin():
+        my_projects = db.load_all_projects(10)
+    else:
+        my_projects = db.load_public_projects(10)
     return render_template("projects.html", my_projects=my_projects, is_admin=is_admin())
 
 @app.route("/projects/<id>")
