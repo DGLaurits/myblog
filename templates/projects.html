@@ -16,5 +16,12 @@
         <p class="date">{{ project['date'] }}</p>
     </a>
 {% endfor %}
+{% if is_admin %}
+
+<a href="/edit/new">
+  Add new project  
+</a>
+
+{% endif %}
 </section>
 {% endblock %}

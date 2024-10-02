@@ -50,6 +50,10 @@ def project_page(id):
 @app.route("/edit/<id>", methods=["GET", "POST"])
 @admin_required
 def write_page(id):
+    if id == "new":
+        new_id = db.add_project("New project", "", "", "", 0)
+        print(new_id)
+        return redirect(f"/edit/{new_id}")
     if request.method == "POST":
         title = request.form.get('title')
         description = request.form.get('description')

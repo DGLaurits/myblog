@@ -16,7 +16,10 @@ def add_project(title: str, content: str, description: str, main_image_path: str
 
     cursor.execute('INSERT INTO projects (title, content, description, main_image, date, public) VALUES (?, ?, ?, ?, ?, ?)', (title, content, description, main_image_path, current_date, public))
     connect.commit()
+    cursor.execute('SELECT MAX(id) FROM projects')
+    id = cursor.fetchone()
     cursor.close()
+    return id[0]
 
 def update_project(id: str, title: str, content: str, description: str, main_image_path: str, public: int):
     cursor = connect.cursor()

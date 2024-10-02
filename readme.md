@@ -3,7 +3,6 @@
 
 ## Roadmap
 #### Finish site
- + Add "new blog post"
  + Add "delete blog post"
  + Add tags
 
