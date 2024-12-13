@@ -67,6 +67,12 @@ def write_page(id):
 
     return render_template("writing.html", project=project)
 
+@app.route("/delete/<id>")
+@admin_required
+def delete(id):
+    db.delete_project(id)
+    return redirect('/projects')
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
