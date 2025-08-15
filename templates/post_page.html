@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block main %}
-
-<div id="preview" class="p-4 bg-gray-50 prose prose-sm">
-    {{ content|safe }}
-</div>
+<section class="flex flex-row min-h-screen justify-center items-center">
+    <div id="preview" class="p-1 pt-6 bg-gray-50 prose prose-sm ">
+        {{ content|safe }}
+    </div>
+</section>
 
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
 <script>
