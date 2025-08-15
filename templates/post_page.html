@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% block main %}
 
-<section>
+<div id="preview" class="p-4 bg-gray-50 prose prose-sm">
     {{ content|safe }}
-</section>
+</div>
 
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+<script>
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([preview]).catch(err => console.error(err));
+    }
+</script>
 {% endblock %}

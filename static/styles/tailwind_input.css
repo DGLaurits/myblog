@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+.prose img {
+  @apply rounded-lg shadow-md;
+}
+
+.prose {
+  max-width: none;
+}

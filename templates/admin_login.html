@@ -1,22 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Admin Login{% endblock %}
+
 {% block main %}
-
-<section>
-    {% if isadmin %}
-    <form action="/logout" method="post">
-        <button type="submit">Logout</button>
-    </form>
-    {% else %}
-    <form style="display: flex; flex-direction: column; gap: 10px;" action="/admin" method="post">
-        <div>
-            <label>Admin password:</label>
-            <input type="password" name="password" id="password" autofocus>
-        </div>
-        <button type="submit">Enter</button>
-        <p style="color: red;"><strong>{{message}}</strong></p>
-    </form>
-    {% endif %}
+<section class="flex justify-center items-center min-h-[70vh]">
+    <div class="w-full max-w-sm bg-white p-8 rounded-lg shadow-md">
+        {% if is_admin %}
+        <form action="{{ url_for('admin.logout') }}" method="post" class="flex flex-col gap-4">
+            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                Logout
+            </button>
+        </form>
+        {% else %}
+        <form action="{{ url_for('admin.admin_login') }}" method="post" class="flex flex-col gap-4">
+            <label for="password" class="font-semibold">Admin Password:</label>
+            <input 
+                type="password" 
+                name="password" 
+                id="password" 
+                autofocus
+                class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                Enter
+            </button>
+            {% if message %}
+            <p class="text-red-500 font-semibold">{{ message }}</p>
+            {% endif %}
+        </form>
+        {% endif %}
+    </div>
 </section>
-
 {% endblock %}

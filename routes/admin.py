@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, session, flash, send_file
+from flask import Blueprint, render_template, redirect, request, session, flash, send_file, url_for
 from werkzeug.utils import secure_filename
 import os, io, string, random
 from models import Image
@@ -24,7 +24,7 @@ def admin_login():
             return render_template('admin_login.html', message="Wrong password")
     return render_template('admin_login.html', is_admin=is_admin())
 
-@admin_bp.route('/logout')
+@admin_bp.route('/logout', methods=['POST'])
 def logout():
     if is_admin():
         session['admin'] = False
@@ -47,7 +47,22 @@ def post_image():
         Image.create(filename, file.read())
     return redirect("/images")
 
-@admin_bp.route("/get_image/<int:id>")
-def send_image(id):
-    image = Image.query.get_or_404(id)
+@admin_bp.route("/get_image/<int:image_id>")
+def send_image(image_id):
+    image = Image.query.get_or_404(image_id)
     return send_file(io.BytesIO(image.image), mimetype="image/jpeg")
+
+@admin_bp.route('/edit/<int:post_id>/images')
+def edit_post_images(post_id):
+    page = request.args.get('page', 1, type=int)
+    per_page = 6
+    images_pagination = Image.query.order_by(Image.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    images = images_pagination.items
+
+    image_list = [{"id": img.id, "src": url_for('admin.send_image', image_id=img.id)} for img in images]
+
+    return {
+        "images": image_list,
+        "page": page,
+        "total_pages": images_pagination.pages
+    }

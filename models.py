@@ -8,9 +8,9 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text, nullable=False)
     main_image = db.Column(db.String(255), nullable=False)
-    public = db.Column(db.Integer, default=0)
-    date = db.Column(db.String(20), default=datetime.today().strftime('%d-%m-%Y'))
-    last_edited = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    public = db.Column(db.Integer, default=0, nullable=False)
+    date = db.Column(db.String(20), default=datetime.today().strftime('%d-%m-%Y'), nullable=False)
+    last_edited = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     @classmethod
     def create(cls, title, content, description, main_image, public=0):
@@ -32,8 +32,6 @@ class Post(db.Model):
         if description is not None: self.description = description
         if main_image is not None: self.main_image = main_image
         if public is not None: self.public = public
-
-        self.last_edited = datetime.utcnow()  # force update every time
 
         db.session.commit()
 
