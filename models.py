@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from extensions import db
 
 class Post(db.Model):
@@ -9,7 +9,8 @@ class Post(db.Model):
     description = db.Column(db.Text, nullable=False)
     main_image = db.Column(db.String(255), nullable=False)
     public = db.Column(db.Integer, default=0)
-    date = db.Column(db.String(20), default=date.today().strftime('%d-%m-%Y'))
+    date = db.Column(db.String(20), default=datetime.today().strftime('%d-%m-%Y'))
+    last_edited = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     @classmethod
     def create(cls, title, content, description, main_image, public=0):
@@ -19,7 +20,7 @@ class Post(db.Model):
             description=description,
             main_image=main_image,
             public=public,
-            date=date.today().strftime('%d-%m-%Y')
+            date=datetime.today().strftime('%d-%m-%Y')
         )
         db.session.add(post)
         db.session.commit()
@@ -31,7 +32,9 @@ class Post(db.Model):
         if description is not None: self.description = description
         if main_image is not None: self.main_image = main_image
         if public is not None: self.public = public
-        self.date = date.today().strftime('%d-%m-%Y')
+
+        self.last_edited = datetime.utcnow()  # force update every time
+
         db.session.commit()
 
     def delete(self):
