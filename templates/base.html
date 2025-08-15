@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Laurits' blog</title>
-    <link rel="stylesheet" href="{{ url_for('.static', filename = 'styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'styles/style.css') }}">
     {% block head_extra %}
     {% endblock %}
 </head>
@@ -28,13 +28,13 @@
         <ul id="footer-links">
         <li>
             <a href="https://github.com/DGLaurits">
-                <img src="{{ url_for('.static', filename = 'svgs/github.svg') }}" width="20px" height="20px" alt="Github"/>
+                <img src="{{ url_for('static', filename = 'svgs/github.svg') }}" width="20px" height="20px" alt="Github"/>
                 Github
             </a>
         </li>
         <li>
             <a href="https://www.linkedin.com/in/laurits-madsen/">
-                <img src="{{ url_for('.static', filename = 'svgs/linkedin.svg') }}" width="20px" height="20px" alt="LinkedIn"/>
+                <img src="{{ url_for('static', filename = 'svgs/linkedin.svg') }}" width="20px" height="20px" alt="LinkedIn"/>
                 LinkedIn
             </a>
         </li>
