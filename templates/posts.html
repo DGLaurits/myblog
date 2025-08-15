@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block main %}
+
+<section>
+{% for post in my_posts %}
+    <a 
+    {% if is_admin%}
+    href="/edit/{{ post['id'] }}" 
+    {% else %}
+    href="/post/{{ post['id'] }}" 
+    {% endif %}
+    class="post_intro">
+        <img src="{{ post['main_image'] }}">
+        <h3 class="title">{{ post['title'] }}</h4>
+        <p class="description">{{ post['description'] }}</p>
+        <p class="date">{{ post['date'] }}</p>
+    </a>
+{% endfor %}
+{% if is_admin %}
+
+<a href="/edit/new">
+  Add new post
+</a>
+
+{% endif %}
+</section>
+{% endblock %}
