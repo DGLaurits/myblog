@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from extensions import db
+from extensions import db, migrate
 from routes.blog import blog_bp
 from routes.admin import admin_bp
 
@@ -14,6 +14,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     with app.app_context():
         db.create_all()
