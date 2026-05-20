@@ -47,6 +47,18 @@ class Post(db.Model):
     def all_posts(cls, limit=10):
         return cls.query.limit(limit).all()
 
+    @property
+    def hero_image_url(self):
+        """URL for list/card thumbnails. Supports /get_image/<id>, numeric id, or external URL."""
+        value = (self.main_image or '').strip()
+        if not value:
+            return None
+        if value.startswith('/get_image/') or value.startswith('http://') or value.startswith('https://'):
+            return value
+        if value.isdigit():
+            return f'/get_image/{value}'
+        return value
+
 
 class Image(db.Model):
     __tablename__ = 'images'
@@ -60,3 +72,7 @@ class Image(db.Model):
         db.session.add(img)
         db.session.commit()
         return img
+
+    @property
+    def url_path(self):
+        return f'/get_image/{self.id}'

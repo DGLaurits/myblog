@@ -1,15 +1,21 @@
 {% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block head_extra %}
+{% include "includes/mathjax.html" %}
+{% endblock %}
+
 {% block main %}
-<section class="flex flex-row min-h-screen justify-center items-center">
-    <div id="preview" class="p-1 pt-6 bg-gray-50 prose prose-sm ">
+<article class="prose lg:prose-lg max-w-3xl mx-auto py-8">
+    <header class="mb-8">
+        <h1 class="font-bold text-center mb-2">{{ post.title }}</h1>
+        <p class="text-center text-gray-500">{{ post.date }}</p>
+    </header>
+    <div id="post-content" class="text-justify max-w-none">
         {{ content|safe }}
     </div>
-</section>
-
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+</article>
 <script>
-    if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([preview]).catch(err => console.error(err));
-    }
+  typesetMath([document.getElementById('post-content')]);
 </script>
 {% endblock %}

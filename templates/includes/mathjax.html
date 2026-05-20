@@ -1,0 +1,30 @@
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+<script>
+function typesetMath(elements) {
+  const run = () => {
+    if (window.MathJax?.typesetPromise) {
+      return MathJax.typesetPromise(elements);
+    }
+    return Promise.resolve();
+  };
+  if (window.MathJax?.typesetPromise) {
+    return run();
+  }
+  const script = document.getElementById('MathJax-script');
+  if (!script) return Promise.resolve();
+  return new Promise((resolve) => {
+    script.addEventListener('load', () => run().then(resolve), { once: true });
+  });
+}
+</script>
