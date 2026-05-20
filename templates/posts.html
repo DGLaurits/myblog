@@ -19,6 +19,13 @@
         <div class="p-4">
             <h3 class="text-xl font-bold mb-2">{{ post.title }}</h3>
             <p class="text-gray-700 text-sm mb-2">{{ post.description }}</p>
+            {% if is_admin and post.tags %}
+            <div class="flex flex-wrap gap-2 mb-2">
+                {% for tag in post.tags %}
+                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
             <p class="text-gray-400 text-xs">{{ post.date }}</p>
         </div>
     </a>

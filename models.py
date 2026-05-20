@@ -1,5 +1,12 @@
-from datetime import date, datetime
+import re
+from datetime import datetime
 from extensions import db
+
+post_tags = db.Table(
+    'post_tags',
+    db.Column('post_id', db.Integer, db.ForeignKey('posts.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True),
+)
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -11,6 +18,7 @@ class Post(db.Model):
     public = db.Column(db.Integer, default=0, nullable=False)
     date = db.Column(db.String(20), default=datetime.today().strftime('%d-%m-%Y'), nullable=False)
     last_edited = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    tags = db.relationship('Tag', secondary=post_tags, back_populates='posts')
 
     @classmethod
     def create(cls, title, content, description, main_image, public=0):
@@ -37,6 +45,10 @@ class Post(db.Model):
 
     def delete(self):
         db.session.delete(self)
+        db.session.commit()
+
+    def set_tags(self, tags):
+        self.tags = tags
         db.session.commit()
 
     @classmethod
@@ -76,3 +88,44 @@ class Image(db.Model):
     @property
     def url_path(self):
         return f'/get_image/{self.id}'
+
+
+class Tag(db.Model):
+    __tablename__ = 'tags'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    slug = db.Column(db.String(60), unique=True, nullable=False)
+    posts = db.relationship('Post', secondary=post_tags, back_populates='tags')
+
+    @staticmethod
+    def normalized_name(name: str) -> str:
+        return re.sub(r'\s+', ' ', name.strip())
+
+    @staticmethod
+    def slugify(name: str) -> str:
+        normalized = Tag.normalized_name(name).lower()
+        slug = re.sub(r'[^a-z0-9]+', '-', normalized).strip('-')
+        return slug or 'tag'
+
+    @classmethod
+    def _next_available_slug(cls, base_slug: str) -> str:
+        slug = base_slug
+        index = 2
+        while cls.query.filter_by(slug=slug).first() is not None:
+            slug = f'{base_slug}-{index}'
+            index += 1
+        return slug
+
+    @classmethod
+    def get_or_create(cls, name: str):
+        normalized = cls.normalized_name(name)
+        existing = cls.query.filter(db.func.lower(cls.name) == normalized.lower()).first()
+        if existing:
+            return existing
+
+        base_slug = cls.slugify(normalized)
+        slug = cls._next_available_slug(base_slug)
+        tag = cls(name=normalized, slug=slug)
+        db.session.add(tag)
+        db.session.commit()
+        return tag

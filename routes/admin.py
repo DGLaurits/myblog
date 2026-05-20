@@ -6,7 +6,8 @@ import string
 from flask import Blueprint, flash, redirect, render_template, request, send_file, session, url_for
 from werkzeug.utils import secure_filename
 
-from models import Image
+from extensions import db
+from models import Image, Tag
 from routes.utils import admin_required, is_admin
 
 admin_bp = Blueprint("admin", __name__)
@@ -98,3 +99,18 @@ def edit_post_images(post_id):
         "page": page,
         "total_pages": images_pagination.pages,
     }
+
+
+@admin_bp.route('/tags/<int:tag_id>/delete', methods=['POST'])
+@admin_required
+def delete_tag(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    tag.posts = []
+    db.session.flush()
+    db.session.delete(tag)
+    db.session.commit()
+
+    post_id = request.form.get('post_id')
+    if post_id:
+        return redirect(url_for('blog.edit_post', post_id=post_id))
+    return redirect(url_for('blog.posts'))
