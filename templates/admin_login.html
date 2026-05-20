@@ -3,7 +3,7 @@
 
 {% block main %}
 <section class="flex justify-center items-center min-h-[70vh]">
-    <div class="w-full max-w-sm bg-white p-8 rounded-lg shadow-md">
+    <div class="panel w-full max-w-sm p-8">
         {% if is_admin %}
         <form action="{{ url_for('admin.logout') }}" method="post" class="flex flex-col gap-4">
             <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
@@ -18,13 +18,13 @@
                 name="password" 
                 id="password" 
                 autofocus
-                class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600/60"
             >
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded">
                 Enter
             </button>
             {% if message %}
-            <p class="text-red-500 font-semibold">{{ message }}</p>
+            <p class="font-semibold text-red-600 dark:text-red-400">{{ message }}</p>
             {% endif %}
         </form>
         {% endif %}

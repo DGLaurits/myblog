@@ -3,11 +3,130 @@
 
 @layer theme {
   :root, :host {
-    --font-serif: 'Rubik Dirt', ui-serif, serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-serif: 'New Amsterdam', ui-serif, serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-sans: 'Work Sans', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --color-app-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-soft: #f1f5f9;
+    --color-text-primary: #111827;
+    --color-text-muted: #475569;
+    --color-border-subtle: #d1d5db;
+    --color-brand-green: #166534;
+    --color-brand-green-soft: #dcfce7;
+    --color-brand-amber: #b45309;
+    --color-brand-amber-soft: #fef3c7;
   }
+
+  @media (prefers-color-scheme: dark) {
+    :root, :host {
+      --color-app-bg: #0b0b0b;
+      --color-surface: #111827;
+      --color-surface-soft: #0f172a;
+      --color-text-primary: #e5e7eb;
+      --color-text-muted: #9ca3af;
+      --color-border-subtle: #1f2937;
+      --color-brand-green: #4ade80;
+      --color-brand-green-soft: #052e16;
+      --color-brand-amber: #fbbf24;
+      --color-brand-amber-soft: #451a03;
+    }
+  }
+
   h1, h2, h3,h4, h5, h6 {
     @apply font-serif;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-app-bg);
+    color: var(--color-text-primary);
+  }
+}
+
+@layer components {
+  .site-shell {
+    background-color: var(--color-app-bg);
+    color: var(--color-text-primary);
+  }
+
+  .site-header {
+    background-color: var(--color-brand-green-soft);
+    color: var(--color-brand-green);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-brand-green) 35%, transparent);
+    @apply shadow-sm;
+  }
+
+  .site-footer {
+    @apply mt-8;
+    background-color: var(--color-brand-amber-soft);
+    color: var(--color-brand-green);
+    border-top: 1px solid color-mix(in srgb, var(--color-brand-amber) 40%, transparent);
+  }
+
+  .nav-link {
+    color: var(--color-text-primary);
+    @apply transition-colors duration-200;
+  }
+
+  .nav-link:hover {
+    color: var(--color-brand-amber);
+  }
+
+  .brand-title {
+    @apply font-serif text-3xl tracking-wide;
+    color: var(--color-brand-green);
+  }
+
+  .brand-subtitle {
+    @apply text-sm italic tracking-wide;
+    color: var(--color-brand-amber);
+  }
+
+  .content-shell {
+    background-color: var(--color-app-bg);
+    color: var(--color-text-primary);
+  }
+
+  .panel {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    @apply rounded-lg shadow-sm;
+  }
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  .accent-hr {
+    border-color: color-mix(in srgb, var(--color-brand-green) 40%, var(--color-border-subtle));
+  }
+
+  .section-divider {
+    @apply my-8 h-px border-0 bg-gradient-to-r from-transparent to-transparent;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in srgb, var(--color-brand-amber) 60%, transparent),
+      transparent
+    );
+  }
+
+  .post-card {
+    @apply block overflow-hidden transition-all duration-200 hover:-translate-y-0.5;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    @apply rounded-lg shadow-sm;
+  }
+
+  .post-card:hover {
+    border-color: color-mix(in srgb, var(--color-brand-green) 55%, var(--color-border-subtle));
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-brand-green) 12%, transparent);
+  }
+
+  .meta-date {
+    @apply text-xs uppercase tracking-wider;
+    color: var(--color-text-muted);
   }
 }
 
@@ -17,4 +136,30 @@
 
 .prose {
   @apply max-w-sm md:max-w-lg lg:max-w-2xl xl:max-w-3xl;
+  color: var(--color-text-primary);
+}
+
+.prose :where(p, li, strong, em, h1, h2, h3, h4, h5, h6, blockquote, code) {
+  color: var(--color-text-primary);
+}
+
+.prose :where(a) {
+  color: var(--color-brand-green);
+  text-decoration-color: color-mix(in srgb, var(--color-brand-amber) 70%, transparent);
+  @apply underline underline-offset-4 transition-colors duration-200;
+}
+
+.prose :where(a:hover) {
+  color: var(--color-brand-amber);
+}
+
+.prose :where(blockquote) {
+  border-left: 4px solid color-mix(in srgb, var(--color-brand-amber) 70%, transparent);
+  background-color: var(--color-surface-soft);
+  color: var(--color-text-muted);
+  @apply py-1;
+}
+
+.prose :where(hr) {
+  border-color: var(--color-border-subtle);
 }
