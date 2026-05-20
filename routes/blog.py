@@ -49,9 +49,10 @@ def edit_post(post_id):
         if selected_ids:
             selected_tags = Tag.query.filter(Tag.id.in_(selected_ids)).all()
 
-        new_tag_name = request.form.get('new_tag_name', '').strip()
-        if new_tag_name:
-            selected_tags.append(Tag.get_or_create(new_tag_name))
+        for new_tag_name in request.form.getlist('new_tag_names'):
+            cleaned_name = new_tag_name.strip()
+            if cleaned_name:
+                selected_tags.append(Tag.get_or_create(cleaned_name))
 
         # Deduplicate while preserving order.
         deduped_tags = []

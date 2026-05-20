@@ -42,31 +42,21 @@
         </div>
 
         <div>
-            <label for="tag_ids" class="block font-semibold mb-1">Tags (max 6)</label>
-            <select
-                id="tag_ids"
-                name="tag_ids"
-                multiple
-                size="6"
-                class="w-full border rounded p-2"
-            >
-                {% for tag in all_tags %}
-                <option value="{{ tag.id }}" {% if tag in post.tags %}selected{% endif %}>{{ tag.name }}</option>
-                {% endfor %}
-            </select>
-            <p class="text-sm text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple tags.</p>
-        </div>
-
-        <div>
-            <label for="new_tag_name" class="block font-semibold mb-1">Add tag to recognized list</label>
-            <input
-                type="text"
-                id="new_tag_name"
-                name="new_tag_name"
-                class="w-full border rounded p-2"
-                placeholder="e.g. Linear Algebra 1"
-            >
-            <p class="text-sm text-gray-500 mt-1">Spaces are converted into slug format automatically.</p>
+            <label for="tag-search-input" class="block font-semibold mb-1">Tags (max 6)</label>
+            <div class="border rounded p-3 bg-white">
+                <div id="selected-tags" class="flex flex-wrap gap-3 mb-3"></div>
+                <input
+                    type="text"
+                    id="tag-search-input"
+                    class="w-full border rounded p-2"
+                    placeholder="Type to search tags or create a new one"
+                    autocomplete="off"
+                >
+                <div id="tag-suggestions" class="mt-2 border rounded hidden bg-white max-h-40 overflow-y-auto"></div>
+                <p id="tag-limit-message" class="text-sm text-red-700 mt-2 hidden">Maximum 6 tags per post.</p>
+            </div>
+            <p class="text-sm text-gray-500 mt-1">Press Enter to add a tag. Spaces are converted to slug automatically.</p>
+            <div id="tag-hidden-inputs"></div>
         </div>
 
         <div>
@@ -74,12 +64,11 @@
                 <label class="block font-semibold">Content</label>
                 <button type="button" id="preview-button" class="px-3 py-1 text-sm bg-blue-500 text-white rounded">Preview</button>
             </div>
-            <p class="text-sm text-gray-500 mb-2">Markdown and LaTeX ($...$, $$...$$)</p>
         </div>
 
         <textarea name="content" id="content" class="w-full border rounded p-2 min-h-[200px]">{{ post.content }}</textarea>
 
-        <div id="preview" class="hidden border rounded p-4 bg-gray-50 prose prose-sm max-w-none"></div>
+        <div id="preview" class="hidden border rounded p-4 bg-gray-50 prose prose-sm max-w-none mx-auto"></div>
 
         <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Save post</button>
     </form>
@@ -91,21 +80,6 @@
             <button type="button" id="prev-btn" class="px-3 py-1 bg-gray-200 rounded">Prev</button>
             <span id="page-info">Page 1</span>
             <button type="button" id="next-btn" class="px-3 py-1 bg-gray-200 rounded">Next</button>
-        </div>
-    </div>
-
-    <div>
-        <h2 class="text-lg font-bold mb-2">Recognized Tags</h2>
-        <div class="border rounded bg-white p-4 space-y-2">
-            {% for tag in all_tags %}
-            <form method="post" action="{{ url_for('admin.delete_tag', tag_id=tag.id) }}" class="flex justify-between items-center">
-                <span class="text-sm">{{ tag.name }} <span class="text-gray-500">({{ tag.slug }})</span></span>
-                <input type="hidden" name="post_id" value="{{ post.id }}">
-                <button type="submit" class="text-red-600 text-sm hover:underline">Delete</button>
-            </form>
-            {% else %}
-            <p class="text-sm text-gray-500">No tags yet.</p>
-            {% endfor %}
         </div>
     </div>
 
@@ -155,6 +129,189 @@
             renderPreview();
         }
     });
+
+    const maxTags = 6;
+    const allTagsById = {
+        {% for tag in all_tags %}
+        "{{ tag.id }}": { id: {{ tag.id }}, name: {{ tag.name | tojson }} },
+        {% endfor %}
+    };
+    const initialSelected = [
+        {% for tag in post.tags %}
+        { id: {{ tag.id }}, name: {{ tag.name | tojson }}, isNew: false },
+        {% endfor %}
+    ];
+
+    const selectedTagsContainer = document.getElementById("selected-tags");
+    const tagSearchInput = document.getElementById("tag-search-input");
+    const tagSuggestions = document.getElementById("tag-suggestions");
+    const tagHiddenInputs = document.getElementById("tag-hidden-inputs");
+    const tagLimitMessage = document.getElementById("tag-limit-message");
+    const selectedTags = [...initialSelected];
+
+    function normalizeTagName(value) {
+        return value.trim().replace(/\s+/g, " ");
+    }
+
+    function tagExists(name) {
+        const normalized = normalizeTagName(name).toLowerCase();
+        return selectedTags.some((t) => t.name.toLowerCase() === normalized);
+    }
+
+    function refreshTagHiddenInputs() {
+        tagHiddenInputs.innerHTML = "";
+        selectedTags.forEach((tag) => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = tag.isNew ? "new_tag_names" : "tag_ids";
+            input.value = tag.isNew ? tag.name : String(tag.id);
+            tagHiddenInputs.appendChild(input);
+        });
+    }
+
+    function refreshSelectedTags() {
+        selectedTagsContainer.innerHTML = "";
+        selectedTags.forEach((tag, index) => {
+            const chip = document.createElement("span");
+            chip.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-blue-100 text-blue-800";
+            chip.textContent = tag.name;
+
+            const removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.className = "inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-200 text-blue-900 hover:bg-blue-300 text-xs leading-none";
+            removeBtn.textContent = "×";
+            removeBtn.setAttribute("aria-label", `Remove ${tag.name}`);
+            removeBtn.addEventListener("click", () => {
+                selectedTags.splice(index, 1);
+                refreshSelectedTags();
+                refreshTagHiddenInputs();
+                renderTagSuggestions();
+            });
+
+            chip.appendChild(removeBtn);
+            selectedTagsContainer.appendChild(chip);
+        });
+
+        tagLimitMessage.classList.toggle("hidden", selectedTags.length < maxTags);
+    }
+
+    function addTag(tag) {
+        if (selectedTags.length >= maxTags || tagExists(tag.name)) {
+            return;
+        }
+        selectedTags.push(tag);
+        tagSearchInput.value = "";
+        refreshSelectedTags();
+        refreshTagHiddenInputs();
+        renderTagSuggestions();
+    }
+
+    function renderTagSuggestions() {
+        const query = normalizeTagName(tagSearchInput.value).toLowerCase();
+        const available = Object.values(allTagsById).filter((tag) => {
+            if (tagExists(tag.name)) return false;
+            if (!query) return true;
+            return tag.name.toLowerCase().includes(query);
+        });
+
+        tagSuggestions.innerHTML = "";
+        if (selectedTags.length >= maxTags) {
+            tagSuggestions.classList.add("hidden");
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        available.slice(0, 8).forEach((tag) => {
+            const row = document.createElement("div");
+            row.className = "flex w-full items-center justify-between px-2 py-1.5 text-sm";
+
+            const addBtn = document.createElement("button");
+            addBtn.type = "button";
+            addBtn.className = "flex-1 text-left px-2 py-1 rounded hover:bg-gray-100";
+            addBtn.textContent = tag.name;
+            addBtn.addEventListener("click", () => addTag({ ...tag, isNew: false }));
+            row.appendChild(addBtn);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.type = "button";
+            deleteBtn.className = "ml-3 inline-flex items-center justify-center w-5 h-5 rounded-full text-red-700 hover:bg-red-100";
+            deleteBtn.textContent = "×";
+            deleteBtn.setAttribute("aria-label", `Delete recognized tag ${tag.name}`);
+            deleteBtn.addEventListener("click", async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (!confirm(`Delete tag \"${tag.name}\" from recognized tags?`)) return;
+
+                const body = new URLSearchParams({ post_id: String(postId) });
+                const response = await fetch(`/tags/${tag.id}/delete`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+                    body: body.toString(),
+                });
+                if (!response.ok) return;
+
+                delete allTagsById[String(tag.id)];
+                for (let i = selectedTags.length - 1; i >= 0; i -= 1) {
+                    if (selectedTags[i].id === tag.id) {
+                        selectedTags.splice(i, 1);
+                    }
+                }
+                refreshSelectedTags();
+                refreshTagHiddenInputs();
+                renderTagSuggestions();
+            });
+            row.appendChild(deleteBtn);
+            fragment.appendChild(row);
+        });
+
+        const normalizedInput = normalizeTagName(tagSearchInput.value);
+        const knownTag = Object.values(allTagsById).some(
+            (tag) => tag.name.toLowerCase() === normalizedInput.toLowerCase()
+        );
+        if (normalizedInput && !knownTag && !tagExists(normalizedInput)) {
+            const createRow = document.createElement("button");
+            createRow.type = "button";
+            createRow.className = "block w-full text-left px-3 py-2 hover:bg-gray-100 text-sm text-green-700";
+            createRow.textContent = `Create tag: ${normalizedInput}`;
+            createRow.addEventListener("click", () => addTag({ name: normalizedInput, isNew: true }));
+            fragment.appendChild(createRow);
+        }
+
+        if (!fragment.childNodes.length) {
+            tagSuggestions.classList.add("hidden");
+            return;
+        }
+
+        tagSuggestions.appendChild(fragment);
+        tagSuggestions.classList.remove("hidden");
+    }
+
+    tagSearchInput.addEventListener("input", renderTagSuggestions);
+    tagSearchInput.addEventListener("focus", renderTagSuggestions);
+    tagSearchInput.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        const normalizedInput = normalizeTagName(tagSearchInput.value);
+        if (!normalizedInput || selectedTags.length >= maxTags || tagExists(normalizedInput)) return;
+
+        const existingTag = Object.values(allTagsById).find(
+            (tag) => tag.name.toLowerCase() === normalizedInput.toLowerCase()
+        );
+        if (existingTag) {
+            addTag({ ...existingTag, isNew: false });
+        } else {
+            addTag({ name: normalizedInput, isNew: true });
+        }
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!event.target.closest("#tag-search-input") && !event.target.closest("#tag-suggestions")) {
+            tagSuggestions.classList.add("hidden");
+        }
+    });
+
+    refreshSelectedTags();
+    refreshTagHiddenInputs();
 
     let currentPage = 1;
     let totalPages = 1;
