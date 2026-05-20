@@ -3,11 +3,7 @@
 
 ## Roadmap
 #### Finish site
- + Add "delete blog post"
  + Add tags
-
-#### Miscellanous
- + Make images center in blog posts
 
 #### Write blogs
  + Write blog about the mandel-brot visualizer
