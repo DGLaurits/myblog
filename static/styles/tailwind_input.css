@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@layer theme {
+  :root, :host {
+    --font-serif: 'Rubik Dirt', ui-serif, serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-sans: 'Work Sans', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  }
+  h1, h2, h3,h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
 .prose img {
   @apply rounded-lg shadow-md;
 }
